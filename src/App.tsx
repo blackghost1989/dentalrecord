@@ -45,6 +45,7 @@ const formatToothSummary = (id: string, data: ToothData) => {
     if (data.boneLoss === '>50%' || data.furcation === 'F3') pdClass = 'PD4';
     else if (data.boneLoss === '25-50%' || data.furcation === 'F2') pdClass = 'PD3';
     else if (data.boneLoss === '<25%' || data.furcation === 'F1') pdClass = 'PD2';
+    else if (data.gingivitis && data.gingivitis >= 1 && data.gingivitis <= 3) pdClass = 'PD1';
 
     if (pdClass) findings.push(pdClass);
 
