@@ -263,14 +263,22 @@ function App() {
                 const buttons = clone.querySelectorAll('button');
                 buttons.forEach(btn => btn.remove());
 
+                // FIX TRUNCATE AND OVERFLOW: Remove truncate classes so text doesn't cut off
+                const truncates = clone.querySelectorAll('.truncate');
+                truncates.forEach(el => {
+                    el.classList.remove('truncate');
+                    (el as HTMLElement).style.whiteSpace = 'normal';
+                    (el as HTMLElement).style.wordBreak = 'break-word';
+                });
+
                 // 2. GLOBAL OFFSET: Nudge labels and small text up to fix html2canvas baseline drop
-                const labels = clone.querySelectorAll('label, span');
+                const labels = clone.querySelectorAll('label, span, h1, h2');
                 labels.forEach(el => {
                     const htmlEl = el as HTMLElement;
                     // Apply offset only if it's not a generic container
                     if (htmlEl.innerText.trim().length > 0) {
                         htmlEl.style.position = 'relative';
-                        htmlEl.style.top = '-5px'; // Lift text up more
+                        htmlEl.style.top = '-2px'; // Lift text up a bit, but less to prevent top clipping
                     }
                 });
 
@@ -332,7 +340,7 @@ function App() {
                         textDiv.style.paddingLeft = computed.paddingLeft;
                         textDiv.style.paddingRight = computed.paddingRight;
                         textDiv.style.paddingTop = '0px';
-                        textDiv.style.paddingBottom = '6px'; // OFFSET: Increased to 6px to push text visual up significantly
+                        textDiv.style.paddingBottom = '4px'; // OFFSET: push text visual up
                         textDiv.style.margin = computed.margin;
                         textDiv.style.boxSizing = 'border-box';
 
@@ -367,8 +375,9 @@ function App() {
                         }
 
                         textDiv.textContent = displayValue;
-                        textDiv.style.whiteSpace = 'nowrap';
-                        textDiv.style.overflow = 'hidden';
+                        textDiv.style.whiteSpace = 'normal';
+                        textDiv.style.overflow = 'visible';
+                        textDiv.style.wordBreak = 'break-word';
 
                         if (cloned.parentNode) {
                             cloned.parentNode.replaceChild(textDiv, cloned);
@@ -385,6 +394,12 @@ function App() {
                 clone.style.overflow = 'visible';
                 clone.style.zIndex = '-1';
                 clone.style.backgroundColor = '#ffffff';
+
+                // Explicitly disable flex wrapper styles that could break in wide widths
+                const mainWrapper = clone.querySelector('.md\\:flex-row');
+                if (mainWrapper) {
+                    (mainWrapper as HTMLElement).style.display = 'block'; // force block layout for the print container
+                }
 
                 // Ensure all scrollable containers in clone are expanded
                 const scrollables = clone.querySelectorAll('.overflow-hidden, .overflow-auto');
@@ -543,10 +558,10 @@ function App() {
 
                 {/* Chart Container */}
                 <motion.div
-                    className="flex-1 flex items-start justify-center bg-gray-50 p-1 md:p-2 overflow-auto min-h-0"
+                    className="flex-1 w-full flex items-start justify-center bg-gray-50 p-1 md:p-2 overflow-auto min-h-0"
                     layout
                 >
-                    <div className="w-full max-w-4xl bg-white rounded-xl shadow-sm border border-gray-200 p-0 md:p-2">
+                    <div className="w-full max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-0 md:p-2">
                         <DentalChart
                             species={patientInfo.species}
                             teethData={teethData}
