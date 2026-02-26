@@ -34,9 +34,29 @@ const treatmentLabels: Record<string, string> = {
     flap: 'Flap Surgery'
 };
 
+const getToothRoots = (species: 'dog' | 'cat', toothId: string | number): number => {
+    const idNum = typeof toothId === 'string' ? parseInt(toothId) : toothId;
+    if (isNaN(idNum)) return 1;
+
+    if (species === 'dog') {
+        const root3 = [108, 109, 110, 208, 209, 210];
+        const root2 = [106, 107, 206, 207, 306, 307, 308, 309, 310, 406, 407, 408, 409, 410];
+        if (root3.includes(idNum)) return 3;
+        if (root2.includes(idNum)) return 2;
+        return 1;
+    } else {
+        const root3 = [108, 208];
+        const root2 = [107, 207, 307, 308, 309, 407, 408, 409];
+        if (root3.includes(idNum)) return 3;
+        if (root2.includes(idNum)) return 2;
+        return 1;
+    }
+};
+
 const formatToothSummary = (id: string, data: ToothData) => {
     const findings: string[] = [];
     if (data.missing) findings.push('Missing');
+    if (data.wear) findings.push('Wear');
     if (data.mobile && data.mobile !== 'M0') findings.push(`Mobility ${data.mobile}`);
     if (data.furcation && data.furcation !== 'none') findings.push(`Furcation ${data.furcation}`);
 
@@ -53,14 +73,16 @@ const formatToothSummary = (id: string, data: ToothData) => {
     if (data.pocket) findings.push(`Pocket ${data.pocket}`);
     if (data.boneLoss && data.boneLoss !== 'none') findings.push(`Bone Loss ${data.boneLoss}`);
     if (data.fractureType) findings.push(`Fracture: ${data.fractureType}`);
+    if (data.toothResorption) findings.push(`Resorption: ${data.toothResorption === 'type1' ? 'Type 1' : data.toothResorption === 'type2' ? 'Type 2' : 'Type 3'}`);
+    if (data.malocclusion) findings.push(`Malocclusion: ${data.malocclusion === 'class1' ? 'Class 1' : data.malocclusion === 'class2' ? 'Class 2' : data.malocclusion === 'class3' ? 'Class 3' : 'Class 4'}`);
     if (data.xrayOne) findings.push(`X-ray: ${data.xrayOne}`);
 
     const treatments: string[] = [];
-    if (data.treatments.perio) treatments.push('Perio');
-    if (data.treatments.endo) treatments.push('Endo');
-    if (data.treatments.restore) treatments.push('Restore');
-    if (data.treatments.extract) treatments.push('Extract');
-    if (data.treatments.flap) treatments.push('Flap');
+    if (data.treatments?.perio) treatments.push('Perio');
+    if (data.treatments?.endo) treatments.push('Endo');
+    if (data.treatments?.restore) treatments.push('Restore');
+    if (data.treatments?.extract) treatments.push('Extract');
+    if (data.treatments?.flap) treatments.push('Flap');
 
     if (findings.length === 0 && treatments.length === 0) return null;
 
@@ -411,6 +433,13 @@ function App() {
         }, 500);
     };
 
+    const totalExtractedRoots = Object.entries(teethData).reduce((total, [id, data]) => {
+        if (data.treatments?.extract) {
+            return total + getToothRoots(patientInfo.species, id);
+        }
+        return total;
+    }, 0);
+
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col text-gray-900 font-sans" id="print-area">
             {/* Header / Patient Info */}
@@ -532,7 +561,14 @@ function App() {
             {/* Findings Summary Section */}
             <div className="bg-white border-t border-gray-200 p-4 pt-2">
                 <div className="max-w-7xl mx-auto">
-                    <h2 className="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Dental Examination Findings Summary</h2>
+                    <div className="flex justify-between items-end mb-4 border-b pb-2">
+                        <h2 className="text-lg font-bold text-gray-800">Dental Examination Findings Summary</h2>
+                        {totalExtractedRoots > 0 && (
+                            <div className="text-sm font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-md border border-red-100">
+                                Extracted Roots: {totalExtractedRoots}
+                            </div>
+                        )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2">
                         {Object.entries(teethData)
                             .map(([id, data]) => formatToothSummary(id, data))

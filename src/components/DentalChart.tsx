@@ -5,6 +5,7 @@ import { DOG_TEETH, CAT_TEETH, ToothDef } from '../constants/teeth';
 
 export interface ToothData {
     missing?: boolean;
+    wear?: boolean;
     mobile?: string; // e.g., 'M0', 'M1', etc.
     furcation?: string; // 'none', 'F1', 'F2', 'F3'
     fractureType?: string; // 'complicated_crown', etc.
@@ -13,6 +14,8 @@ export interface ToothData {
     boneLoss?: string; // %
     gingivitis?: 0 | 1 | 2 | 3;
     calculus?: 0 | 1 | 2 | 3;
+    toothResorption?: string; // 'type1', 'type2', 'type3'
+    malocclusion?: string; // 'class1', 'class2', 'class3', 'class4'
     xrayOne?: string;
     treatments: {
         perio: boolean;

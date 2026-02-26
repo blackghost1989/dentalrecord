@@ -117,6 +117,17 @@ const DataEntryPanel: React.FC<DataEntryPanelProps> = ({ toothId, data, species,
                             <span className="font-medium text-gray-700">Missing Tooth</span>
                         </label>
 
+                        {/* Wear */}
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                checked={!!data.wear}
+                                onChange={(e) => updateField('wear', e.target.checked)}
+                                className="w-4 h-4 text-amber-600 rounded"
+                            />
+                            <span className="font-medium text-gray-700">Wear</span>
+                        </label>
+
                         {/* Mobility Index */}
                         <div>
                             <label className="block text-xs font-semibold text-gray-500 mb-1">Mobility Index</label>
@@ -240,6 +251,37 @@ const DataEntryPanel: React.FC<DataEntryPanelProps> = ({ toothId, data, species,
                                     </button>
                                 ))}
                             </div>
+                        </div>
+
+                        {/* Tooth Resorption */}
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Tooth Resorption</label>
+                            <select
+                                value={data.toothResorption || ''}
+                                onChange={(e) => updateField('toothResorption', e.target.value)}
+                                className="w-full border rounded p-2 text-sm"
+                            >
+                                <option value="">None</option>
+                                <option value="type1">Type 1</option>
+                                <option value="type2">Type 2</option>
+                                <option value="type3">Type 3</option>
+                            </select>
+                        </div>
+
+                        {/* Malocclusion */}
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-500 mb-1">Malocclusion</label>
+                            <select
+                                value={data.malocclusion || ''}
+                                onChange={(e) => updateField('malocclusion', e.target.value)}
+                                className="w-full border rounded p-2 text-sm"
+                            >
+                                <option value="">None</option>
+                                <option value="class1">Class 1</option>
+                                <option value="class2">Class 2 (Overbite)</option>
+                                <option value="class3">Class 3 (Underbite)</option>
+                                <option value="class4">Class 4 (Asymmetry)</option>
+                            </select>
                         </div>
 
                         {/* X-ray Findings */}
