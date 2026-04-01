@@ -1,7 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import catChart from '../assets/cat_chart.jpg';
 import dogChart from '../assets/dog_chart.jpg';
-import { DOG_TEETH, CAT_TEETH, ToothDef } from '../constants/teeth';
+import puppyChart from '../assets/puppy_chart.jpg';
+import kittenChart from '../assets/kitten_chart.jpg';
+import { DOG_TEETH, CAT_TEETH, PUPPY_TEETH, KITTEN_TEETH, ToothDef } from '../constants/teeth';
 
 export interface ToothData {
     missing?: boolean;
@@ -29,15 +31,15 @@ export interface ToothData {
 export type TeethMap = Record<string, ToothData>;
 
 interface DentalChartProps {
-    species: 'dog' | 'cat';
+    species: 'dog' | 'cat' | 'puppy' | 'kitten';
     teethData: TeethMap;
     selectedToothId: string | null;
     onToothClick: (tooth: ToothDef) => void;
 }
 
 const DentalChart: React.FC<DentalChartProps> = ({ species, teethData, selectedToothId, onToothClick }) => {
-    const definitions = species === 'dog' ? DOG_TEETH : CAT_TEETH;
-    const imageSrc = species === 'dog' ? dogChart : catChart;
+    const definitions = species === 'dog' ? DOG_TEETH : species === 'cat' ? CAT_TEETH : species === 'puppy' ? PUPPY_TEETH : KITTEN_TEETH;
+    const imageSrc = species === 'dog' ? dogChart : species === 'cat' ? catChart : species === 'puppy' ? puppyChart : kittenChart;
 
     // Visual Markers
     const renderMarkers = (tooth: ToothDef) => {
@@ -91,7 +93,6 @@ const DentalChart: React.FC<DentalChartProps> = ({ species, teethData, selectedT
 
     return (
         <div className="relative w-full max-w-5xl mx-auto select-none">
-            {/* Container aspect ratio helper if needed, but simple img block is fine */}
             <div className="relative">
                 <img src={imageSrc} alt={`${species} dental chart`} className="w-full h-auto object-contain pointer-events-none" />
 
@@ -104,7 +105,6 @@ const DentalChart: React.FC<DentalChartProps> = ({ species, teethData, selectedT
                     {definitions.map((tooth) => {
                         const isSelected = selectedToothId === tooth.id;
                         const data = teethData[tooth.id];
-                        const hasFindings = data && (data.missing || data.treatments?.extract || data.treatments?.flap); // simplified check
 
                         return (
                             <g

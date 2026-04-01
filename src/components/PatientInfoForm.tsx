@@ -6,7 +6,7 @@ export interface PatientInfo {
     petName: string;
     recordNumber: string;
     date: string;
-    species: 'dog' | 'cat';
+    species: 'dog' | 'cat' | 'puppy' | 'kitten';
     breed: string; // Not strictly required by prompt but good to have, prompt says "Species" implies selection for chart.
     age: string;
     gender: 'M' | 'F' | 'FS' | 'MN' | ''; // Male, Female, Female Spayed, Male Neutered
@@ -122,8 +122,10 @@ const PatientInfoForm: React.FC<PatientInfoFormProps> = ({ info, onChange }) => 
                                 onChange={(e) => handleChange('species', e.target.value as 'dog' | 'cat')}
                                 className="w-full border border-gray-300 rounded-md py-1.5 px-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white"
                             >
-                                <option value="dog">Dog (Canine)</option>
-                                <option value="cat">Cat (Feline)</option>
+                                <option value="dog">Dog (Adult Canine)</option>
+                                <option value="puppy">Puppy (Deciduous Canine)</option>
+                                <option value="cat">Cat (Adult Feline)</option>
+                                <option value="kitten">Kitten (Deciduous Feline)</option>
                             </select>
                         </div>
                     </div>
