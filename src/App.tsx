@@ -8,7 +8,7 @@ import DentalChart, { TeethMap, ToothData } from './components/DentalChart';
 import DataEntryPanel from './components/DataEntryPanel';
 import HistoryPanel, { StoredRecord } from './components/HistoryPanel';
 import CalibrationPanel from './components/CalibrationPanel';
-import { ToothDef, DOG_TEETH, CAT_TEETH } from './constants/teeth';
+import { ToothDef, DOG_TEETH, CAT_TEETH, PUPPY_TEETH, KITTEN_TEETH } from './constants/teeth';
 import { Save, History, Upload } from 'lucide-react';
 
 const mobilityLabels: Record<number, string> = {
@@ -34,19 +34,22 @@ const treatmentLabels: Record<string, string> = {
     flap: 'Flap Surgery'
 };
 
-const getToothRoots = (species: 'dog' | 'cat', toothId: string | number): number => {
+const getToothRoots = (species: 'dog' | 'cat' | 'puppy' | 'kitten', toothId: string | number): number => {
     const idNum = typeof toothId === 'string' ? parseInt(toothId) : toothId;
     if (isNaN(idNum)) return 1;
 
-    if (species === 'dog') {
-        const root3 = [108, 109, 110, 208, 209, 210];
-        const root2 = [106, 107, 206, 207, 306, 307, 308, 309, 310, 406, 407, 408, 409, 410];
+    if (species === 'dog' || species === 'puppy') {
+        // Dog/Puppy logic - logic based on adult Triadan but mapped for deciduous too
+        // Maxillay PM4 (108, 208, 508, 608) and M1, M2 (109, 110, 209, 210) have 3 roots
+        const root3 = [108, 109, 110, 208, 209, 210, 508, 608]; 
+        const root2 = [106, 107, 206, 207, 306, 307, 308, 309, 310, 406, 407, 408, 409, 410, 507, 607, 707, 708, 807, 808];
         if (root3.includes(idNum)) return 3;
         if (root2.includes(idNum)) return 2;
         return 1;
     } else {
-        const root3 = [108, 208];
-        const root2 = [107, 207, 307, 308, 309, 407, 408, 409];
+        // Cat/Kitten logic
+        const root3 = [108, 208, 508, 608];
+        const root2 = [107, 207, 307, 308, 309, 407, 408, 409, 507, 607, 707, 708, 807, 808];
         if (root3.includes(idNum)) return 3;
         if (root2.includes(idNum)) return 2;
         return 1;
@@ -220,7 +223,7 @@ function App() {
 
     const handlePrevTooth = () => {
         if (!selectedTooth) return;
-        const list = patientInfo.species === 'dog' ? DOG_TEETH : CAT_TEETH;
+        const list = patientInfo.species === 'dog' ? DOG_TEETH : patientInfo.species === 'cat' ? CAT_TEETH : patientInfo.species === 'puppy' ? PUPPY_TEETH : KITTEN_TEETH;
         const idx = list.findIndex(t => t.id === selectedTooth.id);
         const prevIdx = (idx - 1 + list.length) % list.length;
         handleToothClick(list[prevIdx]);
@@ -228,7 +231,7 @@ function App() {
 
     const handleNextTooth = () => {
         if (!selectedTooth) return;
-        const list = patientInfo.species === 'dog' ? DOG_TEETH : CAT_TEETH;
+        const list = patientInfo.species === 'dog' ? DOG_TEETH : patientInfo.species === 'cat' ? CAT_TEETH : patientInfo.species === 'puppy' ? PUPPY_TEETH : KITTEN_TEETH;
         const idx = list.findIndex(t => t.id === selectedTooth.id);
         const nextIdx = (idx + 1) % list.length;
         handleToothClick(list[nextIdx]);

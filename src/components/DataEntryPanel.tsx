@@ -5,7 +5,7 @@ import { ToothData } from './DentalChart';
 interface DataEntryPanelProps {
     toothId: string;
     data: ToothData;
-    species: 'dog' | 'cat';
+    species: 'dog' | 'cat' | 'puppy' | 'kitten';
     onUpdate: (data: ToothData) => void;
     onPrev: () => void;
     onNext: () => void;
@@ -54,11 +54,11 @@ const DataEntryPanel: React.FC<DataEntryPanelProps> = ({ toothId, data, species,
 
     const idNum = parseInt(toothId);
     let showFurcation = true;
-    if (species === 'dog') {
-        const noFurcationTeeth = [101, 102, 103, 104, 105, 201, 202, 203, 204, 205, 301, 302, 303, 304, 305, 311, 401, 402, 403, 404, 405, 411];
+    if (species === 'dog' || species === 'puppy') {
+        const noFurcationTeeth = [101, 102, 103, 104, 105, 201, 202, 203, 204, 205, 301, 302, 303, 304, 305, 311, 401, 402, 403, 404, 405, 411, 501, 502, 503, 504, 601, 602, 603, 604, 701, 702, 703, 704, 801, 802, 803, 804];
         if (noFurcationTeeth.includes(idNum)) showFurcation = false;
     } else {
-        const noFurcationTeeth = [101, 102, 103, 104, 106, 109, 201, 202, 203, 204, 206, 209, 301, 302, 303, 304, 401, 402, 403, 404];
+        const noFurcationTeeth = [101, 102, 103, 104, 106, 109, 201, 202, 203, 204, 206, 209, 301, 302, 303, 304, 401, 402, 403, 404, 501, 502, 503, 504, 601, 602, 603, 604, 701, 702, 703, 704, 801, 802, 803, 804];
         if (noFurcationTeeth.includes(idNum)) showFurcation = false;
     }
 
